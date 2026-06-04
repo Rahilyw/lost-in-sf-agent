@@ -9,25 +9,29 @@
 
 A production-pattern AI agent that autonomously plays a city navigation quest — reasoning through missions, coordinating specialist sub-agents, and retrieving grounded knowledge from a vector search index.
 
-Built at **Microsoft Build 2026 (LAB530D)** as a hands-on demonstration of four agentic patterns: **MCP, A2A, RAG, and persistent memory**.
+Built at **Microsoft Build 2026** as a hands-on demonstration of four agentic patterns: **MCP, A2A, RAG, and persistent memory**.
 
 ---
 
 ## The Problem It Solves
 
 Modern AI agents need more than a language model. They need to:
-- **Act on external state** — not just chat, but operate tools that change the world
-- **Delegate to specialists** — call other agents instead of reimplementing their logic
-- **Answer from trusted sources** — retrieve grounded facts rather than hallucinate
-- **Persist across sessions** — remember who they are between runs
+- **Act on external state**
+-         not just chat, but operate tools that change the world
+- **Delegate to specialists**
+-        call other agents instead of reimplementing their logic
+- **Answer from trusted sources**
+-        retrieve grounded facts rather than hallucinate
+- **Persist across sessions**
+-        remember who they are between runs
 
-This project demonstrates all four patterns working together in a single coherent agent.
+This project demonstrates all four patterns working together in a single agent!!
 
 ---
 
 ## How It Works
 
-The agent is dropped into San Francisco with one goal: reach Fort Mason before Build starts. It navigates the city by solving missions — each one either a transport decision or a city knowledge question.
+The agent is dropped into San Francisco with one goal: reach Fort Mason before Build starts. It navigates the city by solving missions; each one either a transport decision or a city knowledge question.
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -45,16 +49,16 @@ The agent is dropped into San Francisco with one goal: reach Fort Mason before B
 └─────────────────────────────────────────────────────┘
 ```
 
-### Pattern 1 — MCP (Model Context Protocol)
+### 1 — MCP (Model Context Protocol)
 The agent connects to the game server as an MCP client. The game exposes its actions (start session, submit answer, advance mission) as MCP tools, and even serves the agent's system prompt over MCP — so the game and agent stay in sync automatically.
 
-### Pattern 2 — A2A (Agent-to-Agent)
+### 2 — A2A (Agent-to-Agent)
 When the game asks *"car, bike, or walking?"*, the agent doesn't guess — it calls **Agent42**, a deployed peer agent, over the A2A protocol. Agent42 checks live weather and real-time traffic, computes all three routes, and returns a recommendation with a map link.
 
-### Pattern 3 — RAG (Retrieval-Augmented Generation)
+### 3 — RAG (Retrieval-Augmented Generation)
 When the game asks a San Francisco trivia question, a city guide specialist agent queries an **Azure AI Search** knowledge base over the SF city guide. Answers are grounded in the actual source material, not model memory.
 
-### Pattern 4 — Memory + Logging
+### 4 — Memory + Logging
 A `ContextProvider` reads `memory.json` and injects the player ID into the agent's instructions before every turn — so the agent resumes the same session across restarts. Every model call, tool call, and response is captured in a timestamped log file for full observability.
 
 ---

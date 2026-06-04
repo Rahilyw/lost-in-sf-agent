@@ -1,4 +1,4 @@
-# Lost in SF — AI Quest Agent
+# Lost in SF: AI Quest Agent
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Azure OpenAI](https://img.shields.io/badge/Azure_OpenAI-gpt--5.5-0078D4?logo=microsoft-azure&logoColor=white)

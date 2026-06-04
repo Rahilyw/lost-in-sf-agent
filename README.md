@@ -16,14 +16,10 @@ Built at **Microsoft Build 2026** as a hands-on demonstration of four agentic pa
 ## The Problem It Solves
 
 Modern AI agents need more than a language model. They need to:
-- **Act on external state**
--         not just chat, but operate tools that change the world
-- **Delegate to specialists**
--        call other agents instead of reimplementing their logic
-- **Answer from trusted sources**
--        retrieve grounded facts rather than hallucinate
-- **Persist across sessions**
--        remember who they are between runs
+- **Act on external state** - not just chat, but operate tools that change the world
+- **Delegate to specialists** - call other agents instead of reimplementing their logic
+- **Answer from trusted sources** - retrieve grounded facts rather than hallucinate
+- **Persist across sessions** - remember who they are between runs
 
 This project demonstrates all four patterns working together in a single agent!!
 

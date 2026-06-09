@@ -5,8 +5,6 @@
 ![Microsoft Agent Framework](https://img.shields.io/badge/Microsoft_Agent_Framework-1.7-5C2D91?logo=microsoft&logoColor=white)
 ![MCP](https://img.shields.io/badge/Protocol-MCP-FF6B35)
 ![A2A](https://img.shields.io/badge/Protocol-A2A-00B4D8)
-![Built at Microsoft Build 2026](https://img.shields.io/badge/Microsoft_Build_2026?logo=microsoft&logoColor=white)
-
 A production-pattern AI agent that autonomously plays a city navigation quest — reasoning through missions, coordinating specialist sub-agents, and retrieving grounded knowledge from a vector search index.
 
 Built at **Microsoft Build 2026** as a hands-on demonstration of four agentic patterns: **MCP, A2A, RAG, and persistent memory**.

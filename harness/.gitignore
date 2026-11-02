@@ -1,0 +1,4 @@
+work/
+__pycache__/
+agent42_mode.txt
+.env.foundry

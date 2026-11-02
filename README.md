@@ -102,6 +102,8 @@ Agent: Correct. Now get to Fort Mason — what transport will you take?
 ├── agent_agent42.py      # Agent42 A2A client — transport recommendations
 ├── agent_city_guide.py   # City guide RAG specialist — Azure AI Search
 ├── log.py                # Session logging middleware
+├── harness/              # Runs the agent without the lab: local game, Agent42, retrieval, Foundry mode
+├── SF_Guide.pdf          # City guide the harness missions and retrieval are built from
 ├── .env                  # Secrets (never committed)
 ├── .gitignore
 └── logs/                 # Per-session log files (never committed)
@@ -145,24 +147,49 @@ Type `HELP` during any mission to trigger the specialist agents. Type `exit` to 
 
 ---
 
+## Run It Without the Lab
+
+The lab's game server, Agent42 and search index were hosted by Microsoft and are gone. The [`harness/`](harness/) folder replaces them so the **real, unmodified** `agent.py` still runs end to end:
+
+| Lab piece | Harness replacement |
+|---|---|
+| Game MCP server | Local FastMCP server: 7 missions built from `SF_Guide.pdf` (landmarks, GPS, opening years, beach safety) |
+| Agent42 (A2A) | Local A2A server that routes with haversine distance and **live weather from [Open-Meteo](https://open-meteo.com/)** (no API key), so rain flips the best transport from bike to car |
+| Azure AI Search | Local retriever over the guide text (the Azure provider is swapped out) |
+| Azure OpenAI | Either a rule-based fake model, or **real Microsoft Foundry models** with `--foundry` |
+
+```bash
+python -W ignore harness/fake_backends.py              # terminal 1: game server + Agent42
+python -W ignore harness/run_offline.py                # terminal 2: offline, fake model
+python -W ignore harness/run_offline.py --foundry      # terminal 2: real Foundry models
+```
+
+`--foundry` reads `harness/.env.foundry` (git-ignored; endpoint, key and deployment names). State, memory and logs go to `harness/work/`, so your real `memory.json` and `logs/` are never touched. Setup, the live-demo script and the Agent42 failure modes are in [`harness/README.md`](harness/README.md).
+
+---
+
 ## Session Logs
 
-Every run produces a structured log in `logs/` showing the full reasoning chain:
+Every run produces a structured log in `logs/` showing the full reasoning chain. This excerpt is from a real run on Foundry (`gpt-4.1-mini`):
 
 ```
-[17:43:04] USER ->
-[user] start the game
+[16:21:10] USER ->
+[user] HELP
 
-[17:43:07] MODEL INPUT (post context providers) ->
-[user] start the game
-[system] From memory: player_id: PLR-760E28
+[16:21:10] MODEL INPUT (post context providers) ->
+[user] HELP
 
-[17:43:07] TOOL CALL  begin_session
-{"player_id": "PLR-760E28"}
+[16:21:12] TOOL CALL  ask_agent42
+{"question": "What is the fastest way to get from Mission Dolores to Castro Theatre today given the weather, using walk, bike, or car?"}
 
-[17:43:09] AGENT <-
-We found player_id PLR-760E28 for Rahil. Do you want to START?
+[16:21:16] TOOL RESULT ask_agent42
+Weather at Mission Dolores: overcast, 17C, wind 1 km/h, rain 0.0 mm (live, Open-Meteo.com). ... Recommendation: bike
+
+[16:21:21] AGENT <-
+The fastest way ... is by bike. ... Which transport do you choose? Car, walking, or bike?
 ```
+
+`MODEL INPUT` is logged once per `agent.run`, and shows the messages the player sent. The system prompt and the memory injected by the `ContextProvider` are not in it.
 
 ---
 

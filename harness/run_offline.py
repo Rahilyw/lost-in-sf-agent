@@ -97,5 +97,6 @@ import agent  # noqa: E402
 
 if __name__ == "__main__":
     print("[harness] commands: START, HELP (Agent42 or city guide), HINT, STATUS, NEW, exit")
-    print("[harness] fake model follows fixed rules; weather is live from Open-Meteo.com\n")
+    model_note = "models are real (Foundry)" if USE_FOUNDRY else "fake model follows fixed rules"
+    print(f"[harness] {model_note}; weather is live from Open-Meteo.com\n")
     asyncio.run(agent.main())

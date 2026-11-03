@@ -166,6 +166,34 @@ python -W ignore harness/run_offline.py --foundry      # terminal 2: real Foundr
 
 `--foundry` reads `harness/.env.foundry` (git-ignored; endpoint, key and deployment names). State, memory and logs go to `harness/work/`, so your real `memory.json` and `logs/` are never touched. Setup, the live-demo script and the Agent42 failure modes are in [`harness/README.md`](harness/README.md).
 
+### Demo it on real Foundry models
+
+You need `harness/.env.foundry` with `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_DEPLOYMENT_NAME` and `CITY_GUIDE_AZURE_OPENAI_DEPLOYMENT_NAME` ([how to create it](harness/README.md#foundry-setup)). Run everything from the repo root.
+
+1. **Optional: reset to a fresh game.** Clears the saved player and progress so the demo starts with registration:
+   ```bash
+   rm -f harness/work/memory.json harness/work/game_state.json
+   ```
+2. **Terminal 1: start the fake backends.** Wait for `fake backends up: mcp:8801  agent42:8802  model:8803`.
+   ```bash
+   python -W ignore harness/fake_backends.py
+   ```
+3. **Terminal 2: start the agent on Foundry.** You should see `[harness] REAL models: https://...`, then the agent asks your name (or welcomes you back).
+   ```bash
+   python -W ignore harness/run_offline.py --foundry
+   ```
+4. **Play the demo.** A good order: give your name → `exit` and rerun to show memory → `HELP` (Agent42 over A2A, live weather) → `bike` → `HELP` (city guide over RAG) → a wrong answer, `HINT`, then `1922`. Then open `harness/work/logs/session-*.log` to show the logged tool calls. The full talk track is in [`harness/README.md`](harness/README.md#live-demo-script-about-5-minutes---foundry).
+
+Commands: `START`, `HELP`, `HINT`, `STATUS`, `NEW`, or type an answer. `exit` quits.
+
+**If something goes wrong**
+- `harness/.env.foundry is missing: ...`: one of the four variables is empty.
+- Traceback on an auth or quota error: model-service errors are not caught, so the app exits. Check the key and that the Foundry resource and deployment still exist.
+- Ports in use: set the same `HARNESS_PORT_BASE` (for example `9801`) in both terminals.
+- Wrong endpoint used: a `.env` in the repo root overrides `.env.foundry`, because `agent.py` calls `load_dotenv(override=True)`. Move it aside first.
+- To show rain flipping the recommendation from bike to car, start terminal 1 with `HARNESS_FORCE_RAIN=1`.
+- The model is not deterministic, so rehearse once. Keep the offline mode (`run_offline.py` with no flag) as a fallback.
+
 ---
 
 ## Session Logs
